@@ -1,0 +1,38 @@
+# Fly.io configuration for Fusion Starter
+app = "fusion-starter"
+primary_region = "iad"
+
+[build]
+  builder = "paketobuildpacks"
+
+[build.args]
+  BP_NODE_ENABLE_COREPACK = "true"
+  BP_NPM_INSTALL_ARGS = ""
+
+[env]
+  NODE_ENV = "production"
+
+[processes]
+  web = "npm start"
+
+[deploy]
+  release_command = "echo 'Build completed, starting application'"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["web"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 1000
+    soft_limit = 100
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
